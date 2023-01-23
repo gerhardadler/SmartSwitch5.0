@@ -1,0 +1,1 @@
+USE_POWER_PERCENTAGE: float = 0.3
