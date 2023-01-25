@@ -10,21 +10,16 @@ openapi.connect(USERNAME, PASSWORD, "86", 'smartlife')
 TUYA_LOGGER.setLevel(logging.INFO)
 TUYA_LOGGER.addHandler(logging.FileHandler('logs.log'))
 
-result = openapi.get(f"/v1.0/iot-03/devices/{DEVICE_ID}/state")
+def get_state():
+    result = openapi.get(f"/v1.0/iot-03/devices/{DEVICE_ID}/state")
+    state = result["result"][0]["value"]
+    return state
 
-state = result["result"][0]["value"]
-
-TUYA_LOGGER.info(state)
-
-with open("mode.txt", "r") as f:
-    mode = f.read()
-
-# if mode == "ECONOMY":
-
-commands = {'commands': [
-    {
-        "code": "switch_1",
-        "value": not state
-    }
-]}
-openapi.post(f'/v1.0/devices/{DEVICE_ID}/commands', commands)
+def set_state(new_state):
+    command = {'commands': [
+        {
+            "code": "switch_1",
+            "value": new_state
+        }
+    ]}
+    openapi.post(f'/v1.0/devices/{DEVICE_ID}/commands', command)
