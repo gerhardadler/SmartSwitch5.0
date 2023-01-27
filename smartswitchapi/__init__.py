@@ -27,17 +27,17 @@ def set_mode():
         return f"\"mode\" must be in {MODES}", 400
 
 
-@app.get("/get_switch_state")
-def get_switch_state():
-    return {"state": tuya.get_state()}
+@app.get("/get_switch_status")
+def get_switch_status():
+    return {"status": tuya.get_status()}
 
 
-@app.post("/set_switch_state")
-def set_switch_state():
+@app.post("/set_switch_status")
+def set_switch_status():
     # type: ignore , request is a global variable changed by Flask
-    status = request.get_json()["state"]
+    status = request.get_json()["status"]
     if type(status) == bool:
-        tuya.set_state(status)
+        tuya.set_status(status)
         return f"Updated status to \"{status}\"", 201
     else:
         return f"\"status\" must be bool", 400
