@@ -1,3 +1,4 @@
 requests==2.28.2
 tuya-iot-py-sdk==0.6.6
 Flask==2.2.2
+pytz==2022.7.1
