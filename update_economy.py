@@ -2,7 +2,7 @@ import os
 from datetime import datetime
 import pytz
 import tuya
-from config import USE_POWER_COUNT
+from config import USE_POWER_COUNT, PROJECT_PATH
 from power_calculation import PowerHourList
 import mode
 
@@ -12,13 +12,14 @@ def update_economy():
     now_string = now.strftime("%Y-%m-%d")
     now_string_file = f"{now_string}.pickle"
 
-    if not f"{now_string}.pickle" in os.listdir("powerdays"):
+    if not f"{now_string}.pickle" in os.listdir(f"{PROJECT_PATH}/powerdays"):
         powerhours = PowerHourList.from_time_and_area(now, "NO1")
-        powerhours.save_to_file(f"powerdays/{now_string_file}")
+        powerhours.save_to_file(f"{PROJECT_PATH}/powerdays/{now_string_file}")
 
     current_mode = mode.get_mode()
 
     if current_mode == "ECONOMY":
+        powerhours = PowerHourList.load_from_file(f"{PROJECT_PATH}/powerdays/{now_string_file}")
         if powerhours.get_powerhour_from_time(now).power_order < USE_POWER_COUNT:
             tuya.set_status(True)
         else:
