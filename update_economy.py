@@ -4,23 +4,27 @@ import pytz
 import tuya
 from config import USE_POWER_COUNT, PROJECT_PATH
 from power_calculation import PowerHourList
-import mode
+import instance.mode as mode
+import instance.area as area
+
 
 def update_economy():
+    if mode.get_mode() != "ECONOMY":
+        return
+
+    current_area = area.get_area()
     oslo_tz = pytz.timezone("Europe/Oslo") 
     now = datetime.now(oslo_tz)
     now_string = now.strftime("%Y-%m-%d")
-    now_string_file = f"{now_string}.pickle"
+    powerhours_file = f"{current_area}-{now_string}.pickle"
 
-    if not f"{now_string}.pickle" in os.listdir(f"{PROJECT_PATH}/powerdays"):
-        powerhours = PowerHourList.from_time_and_area(now, "NO1")
-        powerhours.save_to_file(f"{PROJECT_PATH}/powerdays/{now_string_file}")
-
-    current_mode = mode.get_mode()
-
-    if current_mode == "ECONOMY":
-        powerhours = PowerHourList.load_from_file(f"{PROJECT_PATH}/powerdays/{now_string_file}")
-        if powerhours.get_powerhour_from_time(now).power_order < USE_POWER_COUNT:
-            tuya.set_status(True)
-        else:
-            tuya.set_status(False)
+    if not powerhours_file in os.listdir(f"{PROJECT_PATH}/powerdays"):
+        powerhours = PowerHourList.from_time_and_area(now, current_area)
+        powerhours.save_to_file(f"{PROJECT_PATH}/powerdays/{powerhours_file}")
+    else:
+        powerhours = PowerHourList.load_from_file(f"{PROJECT_PATH}/powerdays/{powerhours_file}")
+    
+    if powerhours.get_powerhour_from_time(now).power_order < USE_POWER_COUNT:
+        tuya.set_status(True)
+    else:
+        tuya.set_status(False)

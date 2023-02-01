@@ -1,11 +1,13 @@
 from flask import Flask, request
-from config import PROJECT_PATH, MODES
+from config import AREAS, PROJECT_PATH, MODES
 import tuya
-import mode
+import instance.mode as mode
+import instance.area as area
 
 from update_economy import update_economy
 
 app = Flask(__name__)
+
 
 @app.get("/get_mode")
 def get_mode():
@@ -28,3 +30,20 @@ def set_mode():
         return f"Updated mode to \"{mode_input}\"", 201
     else:
         return f"\"mode\" must be in {MODES}", 400
+
+
+@app.get("/get_area")
+def get_area():
+    return {"area": area.get_area()}
+
+
+@app.post("/set_area")
+def set_area():
+    # type: ignore , request is a global variable changed by Flask
+    area_input = request.get_json()["area"]
+    if area_input in AREAS:
+        area.set_area(area_input)
+        update_economy()
+        return f"Updated area to \"{area_input}\"", 201
+    else:
+        return f"\"area\" must be in {AREAS}", 400

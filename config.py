@@ -13,3 +13,4 @@ DEVICE_ID: str = "52706618bcddc26b07b5"
 ENDPOINT: str = "https://openapi.tuyaeu.com"
 
 MODES: list[str] = ["ON", "OFF", "ECONOMY"]
+AREAS: list[str] = ["NO1", "NO2", "NO3", "NO4", "NO5"]

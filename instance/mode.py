@@ -2,15 +2,17 @@ from config import PROJECT_PATH, MODES
 import tuya
 
 
-def get_mode():
-    with open(f"{PROJECT_PATH}/mode.txt", "r") as f:
+def get_mode() -> str:
+    with open(f"{PROJECT_PATH}/instance/mode.txt", "r") as f:
         return f.read()
 
 
-def set_mode(mode):
+def set_mode(mode: str) -> None:
     if mode in MODES:
-        with open(f"{PROJECT_PATH}/mode.txt", "w") as f:
+        with open(f"{PROJECT_PATH}/instance/mode.txt", "w") as f:
             f.write(mode)
+    else:
+        raise KeyError(f"\"mode\" must be in {MODES}")
 
 
 def sync_mode():
