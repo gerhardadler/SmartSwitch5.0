@@ -1,10 +1,14 @@
 import logging
 from tuya_iot import TuyaOpenAPI, TUYA_LOGGER
-from config import ENDPOINT, ACCESS_ID, ACCESS_KEY, USERNAME, PASSWORD, DEVICE_ID
+from config import PROJECT_PATH, ENDPOINT, ACCESS_ID, ACCESS_KEY, USERNAME, PASSWORD, DEVICE_ID
+
 
 # Initialization of tuya openapi
 openapi = TuyaOpenAPI(ENDPOINT, ACCESS_ID, ACCESS_KEY)
 openapi.connect(USERNAME, PASSWORD, "86", 'smartlife')
+
+TUYA_LOGGER.setLevel(logging.WARNING)
+TUYA_LOGGER.addHandler(logging.FileHandler(f"{PROJECT_PATH}/logs/tuya.log"))
 
 def get_status():
     result = openapi.get(f"/v1.0/iot-03/devices/{DEVICE_ID}/status")
@@ -12,10 +16,10 @@ def get_status():
     return status
 
 def set_status(new_status):
-    command = {'commands': [
+    command = {"commands": [
         {
             "code": "switch_1",
             "value": new_status
         }
     ]}
-    openapi.post(f'/v1.0/devices/{DEVICE_ID}/commands', command)
+    openapi.post(f"/v1.0/devices/{DEVICE_ID}/commands", command)
