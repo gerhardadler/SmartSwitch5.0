@@ -1,5 +1,7 @@
 import math
 
+PROJECT_PATH: str = "/home/gerhardadler/www/SmartSwitch5.0"
+
 USE_POWER_PERCENTAGE: float = 0.3
 USE_POWER_COUNT: int = math.floor(24 * USE_POWER_PERCENTAGE)
 
