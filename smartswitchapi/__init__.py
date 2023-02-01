@@ -24,7 +24,7 @@ def set_mode():
         elif mode_input == "OFF":
             tuya.set_status(False)
         elif mode_input == "ECONOMY":
-            update_economy.update_economy()
+            update_economy()
         return f"Updated mode to \"{mode_input}\"", 201
     else:
         return f"\"mode\" must be in {MODES}", 400
