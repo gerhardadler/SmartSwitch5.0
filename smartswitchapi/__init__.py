@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 from config import AREAS, PROJECT_PATH, MODES
 import tuya
 import instance.mode as mode
@@ -7,6 +8,7 @@ import instance.area as area
 from update_economy import update_economy
 
 app = Flask(__name__)
+CORS(app)
 
 
 @app.get("/get_mode")
