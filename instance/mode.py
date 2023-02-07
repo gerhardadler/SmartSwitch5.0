@@ -15,12 +15,11 @@ def set_mode(mode: str) -> None:
         raise KeyError(f"\"mode\" must be in {MODES}")
 
 
-def sync_mode():
+def sync_mode(retry=5, delay=0.2):
     mode = get_mode()
     if mode == "ECONOMY":
         return
-    
-    if tuya.get_status() and mode != "ON":
+    if tuya.get_status(retry, delay) and mode != "ON":
         set_mode("ON")
-    elif not tuya.get_status() and mode != "OFF":
+    elif not tuya.get_status(retry, delay) and mode != "OFF":
         set_mode("OFF")

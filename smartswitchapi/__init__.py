@@ -13,7 +13,10 @@ CORS(app)
 
 @app.get("/get_mode")
 def get_mode():
-    mode.sync_mode()
+    try:
+        mode.sync_mode()
+    except tuya.TuyaException as e:
+        return "Tuya exception", 504
     return {"mode": mode.get_mode()}
 
 
@@ -22,13 +25,17 @@ def set_mode():
     # type: ignore , request is a global variable changed by Flask
     mode_input = request.get_json()["mode"]
     if mode_input in MODES:
-        mode.set_mode(mode_input)
-        if mode_input == "ON":
-            tuya.set_status(True)
-        elif mode_input == "OFF":
-            tuya.set_status(False)
-        elif mode_input == "ECONOMY":
-            update_economy()
+        try:
+            if mode_input == "ON":
+                tuya.set_status(True)
+            elif mode_input == "OFF":
+                tuya.set_status(False)
+            elif mode_input == "ECONOMY":
+                update_economy()
+        except tuya.TuyaException as e:
+            return "Tuya exception", 504
+        else:
+            mode.set_mode(mode_input)
         return f"Updated mode to \"{mode_input}\"", 201
     else:
         return f"\"mode\" must be in {MODES}", 400
